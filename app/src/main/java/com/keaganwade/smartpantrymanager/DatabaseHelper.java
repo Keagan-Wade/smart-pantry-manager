@@ -49,6 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    // Adds ingredient to the database
     public long addIngredient(Ingredient ingredient) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -59,6 +60,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COL_EXPIRY, ingredient.getExpiryDate());
 
         return db.insert(TABLE_PANTRY, null, values);
+    }
+
+    // Update an ingredient
+    public int updateIngredient(Ingredient ingredient) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COL_NAME, ingredient.getName());
+        values.put(COL_QUANTITY, ingredient.getQuantity());
+        values.put(COL_UNIT, ingredient.getUnit());
+        values.put(COL_EXPIRY, ingredient.getExpiryDate());
+
+        return  db.update(TABLE_PANTRY, values, COL_ID + " = ? ", new String[]{ String.valueOf(ingredient.getId()) });
+    }
+
+    // Delete an ingredient
+    public int deleteIngredient(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        return  db.delete(TABLE_PANTRY, COL_ID + " = ? ", new String[]{ String.valueOf(id) });
     }
 
     // Checks if ingredient exists in DB
@@ -87,7 +107,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 int id = cursor.getInt(idIndex);
                 String name = cursor.getString(nameIndex);
-                float quantity = cursor.getFloat(quantityIndex);
+                double quantity = cursor.getDouble(quantityIndex);
                 String unit = cursor.getString(unitIndex);
                 String expiry_date = cursor.getString(expiryIndex);
 
@@ -97,7 +117,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
 
         } catch (Exception e) {
-            Log.e("DatabaseHelper", "getAllIngredients failed.");
+            Log.e("DatabaseHelper", "getAllIngredients failed.", e);
         }
         return list;
     }

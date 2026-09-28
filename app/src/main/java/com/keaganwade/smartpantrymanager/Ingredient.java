@@ -25,6 +25,7 @@ public class Ingredient {
         this.expiryDate = expiryDate;
     }
 
+    // Getters and Setters
     public int getId() {
         return id;
     }
