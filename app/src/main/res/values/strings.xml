@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Smart Pantry Manager</string>
+    <string name="hint_ingredient_name">Ingredient Name</string>
+    <string name="hint_quantity">Quantity</string>
+    <string name="hint_unit">Unit (g, ml, pcs)</string>
+    <string name="hint_expiry">Expiry Date (YYYY-MM-DD), optional</string>
+    <string name="button_save">Save</string>
 </resources>
