@@ -15,12 +15,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "pantry.db";
     private static final int DB_VERSION = 1;
 
+    // Pantry Table
     public static final String TABLE_PANTRY = "pantry";
     public static final String COL_ID = "id";
     public static final String COL_NAME = "name";
     public static final String COL_QUANTITY = "quantity";
     public static final String COL_UNIT = "unit";
     public static final String COL_EXPIRY = "expiry_date";
+
+    // Recipes Table
+    public static final String TABLE_RECIPES = "recipes";
+    public static final String COL_RECIPE_ID = "id";
+    public static final String COL_RECIPE_NAME = "name";
+    public static final String COL_RECIPE_STEPS = "steps";
+
+    // Recipe Ingredients Table
+    public static final String TABLE_RECIPE_INGREDIENTS = "recipe_ingredients";
+    public static final String COL_RI_ID = "id";
+    public static final String COL_RI_RECIPE_ID = "recipe_id";
+    public static final String COL_RI_NAME = "name";
+    public static final String COL_RI_QUANTITY = "quantity";
+    public static final String COL_RI_UNIT = "unit";
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -30,7 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         // Creating the Pantry Table
-        String statement = "CREATE TABLE " + TABLE_PANTRY +
+        String createPantryStmt = "CREATE TABLE " + TABLE_PANTRY +
                 "(" +
                 COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_NAME + " TEXT NOT NULL, " +
@@ -39,13 +54,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_EXPIRY + " TEXT"
                 + ")";
 
-        // Executes SQL Statement
-        db.execSQL(statement);
+        db.execSQL(createPantryStmt);
+
+        // Creating the Recipes Table
+        String createRecipesStmt = "CREATE TABLE " + TABLE_RECIPES +
+                "(" +
+                COL_RECIPE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_RECIPE_NAME + " TEXT NOT NULL, " +
+                COL_RECIPE_STEPS + " TEXT NOT NULL" +
+                ")";
+
+        db.execSQL(createRecipesStmt);
+
+        // Creating Recipe Ingredients Table
+        String createRIStmt = "CREATE TABLE " + TABLE_RECIPE_INGREDIENTS +
+                "(" +
+                COL_RI_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_RI_RECIPE_ID + " INTEGER NOT NULL, " +
+                COL_RI_NAME + " TEXT NOT NULL, " +
+                COL_RI_QUANTITY + " REAL NOT NULL, " +
+                COL_RI_UNIT + " TEXT NOT NULL, " +
+                "FOREIGN KEY(" + COL_RI_RECIPE_ID + ") REFERENCES " + TABLE_RECIPES + "(" + COL_RECIPE_ID + ")" +
+                ")";
+
+        db.execSQL(createRIStmt);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PANTRY);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECIPES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECIPE_INGREDIENTS);
         onCreate(db);
     }
 
