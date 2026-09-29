@@ -34,6 +34,12 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
         holder.textQuantity.setText(ingredient.getQuantity() + " " + ingredient.getUnit());
     }
 
+    public void updateList(List<Ingredient> newList) {
+        ingredientList.clear();
+        ingredientList.addAll(newList);
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return ingredientList.size();

@@ -5,4 +5,5 @@
     <string name="hint_unit">Unit (g, ml, pcs)</string>
     <string name="hint_expiry">Expiry Date (YYYY-MM-DD), optional</string>
     <string name="button_save">Save</string>
+    <string name="button_add_ingredient">Add Ingredient</string>
 </resources>
