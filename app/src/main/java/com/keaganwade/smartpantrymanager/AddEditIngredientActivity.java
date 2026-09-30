@@ -3,12 +3,14 @@ package com.keaganwade.smartpantrymanager;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AddEditIngredientActivity extends AppCompatActivity {
 
     private DatabaseHelper databaseHelper;
+    private TextView textHeading;
     private EditText editTextName;
     private EditText editTextQuantity;
     private EditText editTextUnit;
@@ -21,12 +23,26 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_edit_ingredient);
         databaseHelper = new DatabaseHelper(this);
 
-
+        textHeading = findViewById(R.id.textHeading);
         editTextName = findViewById(R.id.editTextName);
         editTextQuantity = findViewById(R.id.editTextQuantity);
         editTextUnit = findViewById(R.id.editTextUnit);
         editTextExpiry = findViewById(R.id.editTextExpiry);
         buttonSave = findViewById(R.id.buttonSave);
+
+        int ingredientId = getIntent().getIntExtra("ingredient_id", -1);
+        boolean isEditing = ingredientId != -1;
+
+        if (isEditing) {
+            Ingredient ingredient = databaseHelper.getIngredientById(ingredientId);
+            textHeading.setText(R.string.edit_ingredient);
+            editTextName.setText(ingredient.getName());
+            editTextQuantity.setText(String.valueOf(ingredient.getQuantity()));
+            editTextUnit.setText(ingredient.getUnit());
+            editTextExpiry.setText(ingredient.getExpiryDate());
+        } else {
+            textHeading.setText(R.string.add_ingredient);
+        }
 
         buttonSave.setOnClickListener(v -> {
             String name = editTextName.getText().toString().trim();
@@ -52,8 +68,14 @@ public class AddEditIngredientActivity extends AppCompatActivity {
                 return;
             }
 
-            Ingredient ingredient = new Ingredient(name, quantityValue, unit, expiry.isEmpty() ? null : expiry);
-            databaseHelper.addIngredient(ingredient);
+            if (isEditing) {
+                Ingredient ingredient = new Ingredient(ingredientId, name, quantityValue, unit, expiry.isEmpty() ? null : expiry);
+                databaseHelper.updateIngredient(ingredient);
+            } else {
+                Ingredient ingredient = new Ingredient(name, quantityValue, unit, expiry.isEmpty() ? null : expiry);
+                databaseHelper.addIngredient(ingredient);
+            }
+
             finish();
         });
     }

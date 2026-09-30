@@ -14,9 +14,15 @@ import java.util.List;
 public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder> {
 
     private final List<Ingredient> ingredientList;
+    private final OnIngredientClickListener listener;
 
-    public IngredientAdapter(List<Ingredient> ingredientList) {
+    public interface OnIngredientClickListener {
+        void onIngredientClick(Ingredient ingredient);
+    }
+
+    public IngredientAdapter(List<Ingredient> ingredientList, OnIngredientClickListener listener) {
         this.ingredientList = ingredientList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -32,6 +38,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
         Ingredient ingredient = ingredientList.get(position);
         holder.textName.setText(ingredient.getName());
         holder.textQuantity.setText(ingredient.getQuantity() + " " + ingredient.getUnit());
+        holder.itemView.setOnClickListener(v -> listener.onIngredientClick(ingredient));
     }
 
     public void updateList(List<Ingredient> newList) {

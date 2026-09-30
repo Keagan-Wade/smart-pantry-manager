@@ -6,4 +6,9 @@
     <string name="hint_expiry">Expiry Date (YYYY-MM-DD), optional</string>
     <string name="button_save">Save</string>
     <string name="button_add_ingredient">Add Ingredient</string>
+    <string name="no_recipes_message">No recipes match your pantry yet - add more ingredients</string>
+    <string name="suggested_recipes_button">Suggested Recipes</string>
+    <string name="edit_ingredient">Edit Ingredient</string>
+    <string name="add_ingredient">Add Ingredient</string>
+    <string name="button_settings">Settings</string>
 </resources>

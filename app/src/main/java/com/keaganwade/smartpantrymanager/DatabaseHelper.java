@@ -120,13 +120,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return  db.delete(TABLE_PANTRY, COL_ID + " = ? ", new String[]{ String.valueOf(id) });
     }
 
-    // Checks if ingredient exists in DB
-    public boolean ingredientExists(String name) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_PANTRY, new String[]{COL_ID}, COL_NAME + " = ? ", new String[]{name}, null, null, null);
-        boolean exists = cursor.getCount() > 0;
-        cursor.close();
-        return exists;
+    public void deleteAllIngredients() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_PANTRY, null, null);
     }
 
     public List<Ingredient> getAllIngredients() {
@@ -159,6 +155,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.e("DatabaseHelper", "getAllIngredients failed.", e);
         }
         return list;
+    }
+
+    public Ingredient getIngredientById(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+        String[] columns = {COL_ID, COL_NAME, COL_QUANTITY, COL_UNIT, COL_EXPIRY};
+
+        Ingredient ingredient = null;
+        try (Cursor cursor = db.query(TABLE_PANTRY, columns, COL_ID + " = ?", new String[]{String.valueOf(id)}, null, null, null)) {
+
+            if (cursor.moveToFirst()) {
+
+                int nameIndex = cursor.getColumnIndexOrThrow(COL_NAME);
+                int quantityIndex = cursor.getColumnIndexOrThrow(COL_QUANTITY);
+                int unitIndex = cursor.getColumnIndexOrThrow(COL_UNIT);
+                int expiryIndex = cursor.getColumnIndexOrThrow(COL_EXPIRY);
+
+                String name = cursor.getString(nameIndex);
+                double quantity = cursor.getDouble(quantityIndex);
+                String unit = cursor.getString(unitIndex);
+                String expiry = cursor.getString(expiryIndex);
+
+                ingredient = new Ingredient(id, name, quantity, unit, expiry);
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "getIngredientById failed.", e);
+        }
+
+        return ingredient;
+    }
+
+    public Recipe getRecipeById(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+        String[] columns = {COL_RECIPE_ID, COL_RECIPE_NAME, COL_RECIPE_STEPS};
+
+        Recipe recipe = null;
+        try (Cursor cursor = db.query(TABLE_RECIPES, columns, COL_RECIPE_ID + " = ?", new String[]{String.valueOf(id)}, null, null, null)) {
+
+            if (cursor.moveToFirst()) {
+
+                int nameIndex = cursor.getColumnIndexOrThrow(COL_RECIPE_NAME);
+                int stepsIndex = cursor.getColumnIndexOrThrow(COL_RECIPE_STEPS);
+
+                String name = cursor.getString(nameIndex);
+                String steps = cursor.getString(stepsIndex);
+
+                recipe = new Recipe(id, name, steps, getIngredientsForRecipe(id));
+            }
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "getRecipeById failed.", e);
+        }
+
+        return recipe;
     }
 
     public List<Recipe> getAllRecipes() {
